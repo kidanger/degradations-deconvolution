@@ -1,0 +1,421 @@
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="bootstrap.min.css">
+		<style>
+			table.table-fixed {table-layout: fixed; max-width: 45em;}
+			td.max {font-weight: bold;}
+			div.limited {max-width: 66em;}
+			div#preview_box {min-height: 400px;}
+		</style>
+   
+      <script>
+         function go(obj, loc) {
+            document.getElementById(obj).style.display = "block";
+            document.getElementById(obj).src = loc;
+         }
+         function show(obj, loc) {
+            document.getElementById(obj).style.display = "block";
+         }
+      </script>
+      <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML'></script>
+
+<style>
+.gallery2 {
+    position: relative;
+    width: auto;
+    height: 200px; }
+.gallery2 .index {
+    padding: 0;
+    margin: 0;
+    width: 10.5em;
+    list-style: none; }
+.gallery2 .index li {
+    margin: 0;
+    padding: 0;
+    float: left;}
+.gallery2 .index a { /* gallery2 item title */
+    display: block;
+    background-color: #EEEEEE;
+    border: 1px solid #FFFFFF;
+    text-decoration: none;
+    width: 1.9em;
+    padding: 6px; }
+.gallery2 .index a span { /* gallery2 item content */
+    display: block;
+    position: absolute;
+    left: -9999px; /* hidden */
+    top: 0em;
+    padding-left: 0em; }
+.gallery2 .index a span img{ /* gallery2 item content */
+    width: 130%;
+    }
+.gallery2 .index li:first-child a span {
+    top: 0em;
+    left: 10.5em;
+    z-index: 99; }
+.gallery2 .index a:hover {
+    border: 1px solid #888888; }
+.gallery2 .index a:hover span {
+    left: 10.5em;
+    z-index: 100; }
+</style>
+
+<style>
+   .gallery{position:relative;width:auto;height:200px}
+   .gallery .index{padding:0;margin:0;width:11em;list-style:none}
+   .gallery .index li{margin:0;padding:0} 
+   .gallery .index a{display:block;background-color:#eee;border:1px solid #fff;text-decoration:none;width:13em;padding:5px}
+   .gallery .index a span{display:block;position:absolute;left:-9999px;top:0;padding-left:2em}
+   .gallery .index li:first-child a span{left:12em;z-index:99}
+   .gallery .index a:hover{ border: 1px solid #888888;}
+   .gallery .index a:hover span{left:12em;z-index:100}
+   .gallery .index a span img{ width: 150%; }
+</style>
+
+	<title>Modeling Realistic Degradations for Non-Blind Deconvolution</title>
+	</head>
+
+	<body>
+		<div class="container limited">
+			<div class="page-header">
+				<h2>Modeling Realistic Degradations for Non-Blind Deconvolution</h2>
+
+			   <ul class="list-inline">
+			   	<li>Jérémy Anger</li>
+			   	<li>Mauricio Delbracio</li>
+			   	<li>Gabriele Facciolo</li>
+			   </ul>
+			</div>
+         <center>
+            <!-- <img style="width:10%" src="img/snap_site0.jpg" class="img-responsive" alt="Example results from the paper">-->
+         <img style="height:150px" src="imgs/teaser.png" alt="Example results from the paper">
+         <!--
+         <img style="height:200px" src="img/snap_site1.jpg" alt="Example results from the paper">
+         <img style="height:200px" src="img/snap_site2.jpg" alt="Example results from the paper">
+         <img style="height:200px" src="img/snap_site3.jpg" alt="Example results from the paper">
+         -->
+         <table width='428'>
+         <tr>
+         <td align='center' width='33%'>Input</td>
+         <td align='center' width='33%'>Standard model</td>
+         <td align='center' width='33%'>Our model</td>
+         </tr>
+         </table>
+         </center>
+			<h4>Abstract</h4>
+			<p class="text-justify">
+                 Most image deblurring methods assume an over-simplistic image formation
+                 model and as a result are sensitive to more realistic image degradations.
+                 We propose a novel variational framework, that explicitly handles pixel saturation,
+                 noise, quantization, as well as non-linear camera response function due to e.g.,
+                 gamma correction. We show that accurately modeling a more realistic image
+                 acquisition pipeline leads to significant improvements, both in terms of image
+                 quality and PSNR. Furthermore, we show that incorporating the non-linear response
+                 in both the data and the regularization terms of the proposed energy leads
+                 to a more detailed restoration than a naive inversion of the non-linear curve.
+                 The minimization of the proposed energy is performed using stochastic optimization.
+                 A dataset consisting of realistically degraded images is created in order to evaluate
+                 the method.
+			  </p>
+			   <ul class="list-inline text-center">
+               <li><a href="icip2018.pdf">[article]</a></li>
+               <!-- <li><a href="doc/poster.pdf">[poster]</a></li> -->
+               <li><a href="https://github.com/kidanger/degradations-deconvolution">[source code]</a></li>
+               <li><a href="dataset.zip">[dataset]</a></li>
+			   </ul>
+
+<br/>
+<h3>Realistic image dataset</h3>
+
+<!--
+<center>
+<a href="footprints.html">
+<img style="width:40%" src="img/footprints47.jpg" alt="Footprints of the 47 images">
+<img style="width:40%" src="img/footprints47_angles2.jpg" alt="Viewing direction of the images">
+</a>
+</center>
+<h4>Dataset</h4>
+-->
+
+<p class="text-justify">
+The dataset is composed of eight 256x256 images.
+
+To create the dataset, we chose eight high resolution sharp images.
+The images are converted to linear space by applying the inverse gamma curve
+and subsampled to reduce the residual quantization and noise.
+Then, each image is synthetically blurred using one of the kernels 
+of Levin et al. [1], and saturated by clipping the pixels at the
+98th percentile. Images are converted back to the non-linear space,
+where additive white Gaussian noise of variance \(σ^2 = 5\) is added.
+Finally a quantization with \(q = 1/256\) is applied.
+</p>
+
+<p class="text-justify">
+Content of the dataset folder: ground-truths (float, TIFF format), kernels (float, TIFF format), degraded images (8bits, png), saturation values (txt).
+</p>
+
+<div class="gallery" style="height:290px">
+	<ul class="index">
+		<li><a href="#">Image 1<span><img style="width:100%" src="imgs/input_1.png" /></span></a></li>
+        <li><a href="#">Image 2<span><img style="width:100%" src="imgs/input_2.png" /></span></a></li>
+        <li><a href="#">Image 3<span><img style="width:100%" src="imgs/input_3.png" /></span></a></li>
+        <li><a href="#">Image 4<span><img style="width:100%" src="imgs/input_4.png" /></span></a></li>
+        <li><a href="#">Image 5<span><img style="width:100%" src="imgs/input_5.png" /></span></a></li>
+        <li><a href="#">Image 6<span><img style="width:100%" src="imgs/input_6.png" /></span></a></li>
+        <li><a href="#">Image 7<span><img style="width:100%" src="imgs/input_7.png" /></span></a></li>
+        <li><a href="#">Image 8<span><img style="width:100%" src="imgs/input_8.png" /></span></a></li>
+	</ul>
+</div>
+
+
+<h3>Results</h3>
+
+<p class="text-justify">
+The results below are obtained by optimizing the regularization weight \(\lambda\)
+for PSNR in the first image. The seven other images used the same weight.
+</p>
+<br/>
+
+    <h4>Image 1</h4>
+
+    <!--
+    <small><b>download colored ply:</b>
+    <a href="img/flat/c_Z1.ply.gz">gt</a>,
+    <a href="img/flat/c_rs1_fu_heNEW_N50_med.ply.gz">median 50</a>,
+    <a href="img/flat/c_rs1_fu_heNEW_N50_kmedianslow.ply.gz">k-medians 50</a>
+    </small>
+    -->
+
+    <small>
+    <div class="gallery" style="height:430px">
+        <ul class="index">
+            <li><a href="imgs/input_1.png">Degraded (20.84dB)<span><img src="imgs/input_1.png" /></span></a></li>
+            <li><a href="imgs/groundtruth_1.png">Ground-truth<span><img src="imgs/groundtruth_1.png"/></span></a></li>
+            <li><a href="imgs/out_1_almeida.png">Almeida [2] (26.54dB)<span><img src="imgs/out_1_almeida.png" /></span></a></li>
+            <li><a href="imgs/out_1_whyte.png">Whyte [3] (25.13dB)<span><img src="imgs/out_1_whyte.png" /></span></a></li>
+            <!--
+            <li><a href="#">naive<span><img src="imgs/out_1_naive.png" /></span></a></li>
+            <li><a href="#">naive tv<span><img src="imgs/out_1_naive_tv.png" /></span></a></li>
+            <li><a href="#">gamma<span><img src="imgs/out_1_gamma.png" /></span></a></li>
+            <li><a href="#">gamma tv<span><img src="imgs/out_1_gamma_tv.png" /></span></a></li>
+            <li><a href="#">gamma quantize<span><img src="imgs/out_1_gamma_quantize.png" /></span></a></li>
+            -->
+            <li><a href="imgs/out_1_gamma_quantize_tv.png">Our result (27.27dB)<span><img src="imgs/out_1_gamma_quantize_tv.png" /></span></a></li>
+         </ul>
+    </div>
+    </small>
+    
+    <h4>Image 2</h4>
+
+    <!--
+    <small><b>download colored ply:</b>
+    <a href="img/flat/c_Z1.ply.gz">gt</a>,
+    <a href="img/flat/c_rs1_fu_heNEW_N50_med.ply.gz">median 50</a>,
+    <a href="img/flat/c_rs1_fu_heNEW_N50_kmedianslow.ply.gz">k-medians 50</a>
+    </small>
+    -->
+
+    <small>
+    <div class="gallery" style="height:430px">
+        <ul class="index">
+            <li><a href="imgs/input_2.png">Degraded (16.58dB)<span><img src="imgs/input_2.png" /></span></a></li>
+            <li><a href="imgs/groundtruth_2.png">Ground-truth<span><img src="imgs/groundtruth_2.png"/></span></a></li>
+            <li><a href="imgs/out_2_almeida.png">Almeida [2] (24.93dB)<span><img src="imgs/out_2_almeida.png" /></span></a></li>
+            <li><a href="imgs/out_2_whyte.png">Whyte [3] (23.00dB)<span><img src="imgs/out_2_whyte.png" /></span></a></li>
+            <!--
+            <li><a href="#">naive<span><img src="imgs/out_2_naive.png" /></span></a></li>
+            <li><a href="#">naive tv<span><img src="imgs/out_2_naive_tv.png" /></span></a></li>
+            <li><a href="#">gamma<span><img src="imgs/out_2_gamma.png" /></span></a></li>
+            <li><a href="#">gamma tv<span><img src="imgs/out_2_gamma_tv.png" /></span></a></li>
+            <li><a href="#">gamma quantize<span><img src="imgs/out_2_gamma_quantize.png" /></span></a></li>
+            -->
+            <li><a href="imgs/out_2_gamma_quantize_tv.png">Our result (25.67dB)<span><img src="imgs/out_2_gamma_quantize_tv.png" /></span></a></li>
+         </ul>
+    </div>
+    </small>
+    
+    <h4>Image 3</h4>
+
+    <!--
+    <small><b>download colored ply:</b>
+    <a href="img/flat/c_Z1.ply.gz">gt</a>,
+    <a href="img/flat/c_rs1_fu_heNEW_N50_med.ply.gz">median 50</a>,
+    <a href="img/flat/c_rs1_fu_heNEW_N50_kmedianslow.ply.gz">k-medians 50</a>
+    </small>
+    -->
+
+    <small>
+    <div class="gallery" style="height:430px">
+        <ul class="index">
+            <li><a href="imgs/input_3.png">Degraded (18.11dB)<span><img src="imgs/input_3.png" /></span></a></li>
+            <li><a href="imgs/groundtruth_3.png">Ground-truth<span><img src="imgs/groundtruth_3.png"/></span></a></li>
+            <li><a href="imgs/out_3_almeida.png">Almeida [2] (24.40dB)<span><img src="imgs/out_3_almeida.png" /></span></a></li>
+            <li><a href="imgs/out_3_whyte.png">Whyte [3] (22.73dB)<span><img src="imgs/out_3_whyte.png" /></span></a></li>
+            <!--
+            <li><a href="#">naive<span><img src="imgs/out_3_naive.png" /></span></a></li>
+            <li><a href="#">naive tv<span><img src="imgs/out_3_naive_tv.png" /></span></a></li>
+            <li><a href="#">gamma<span><img src="imgs/out_3_gamma.png" /></span></a></li>
+            <li><a href="#">gamma tv<span><img src="imgs/out_3_gamma_tv.png" /></span></a></li>
+            <li><a href="#">gamma quantize<span><img src="imgs/out_3_gamma_quantize.png" /></span></a></li>
+            -->
+            <li><a href="imgs/out_3_gamma_quantize_tv.png">Our result (24.66dB)<span><img src="imgs/out_3_gamma_quantize_tv.png" /></span></a></li>
+         </ul>
+    </div>
+    </small>
+    
+    <h4>Image 4</h4>
+
+    <!--
+    <small><b>download colored ply:</b>
+    <a href="img/flat/c_Z1.ply.gz">gt</a>,
+    <a href="img/flat/c_rs1_fu_heNEW_N50_med.ply.gz">median 50</a>,
+    <a href="img/flat/c_rs1_fu_heNEW_N50_kmedianslow.ply.gz">k-medians 50</a>
+    </small>
+    -->
+
+    <small>
+    <div class="gallery" style="height:430px">
+        <ul class="index">
+            <li><a href="imgs/input_4.png">Degraded (19.07dB)<span><img src="imgs/input_4.png" /></span></a></li>
+            <li><a href="imgs/groundtruth_4.png">Ground-truth<span><img src="imgs/groundtruth_4.png"/></span></a></li>
+            <li><a href="imgs/out_4_almeida.png">Almeida [2] (26.17dB)<span><img src="imgs/out_4_almeida.png" /></span></a></li>
+            <li><a href="imgs/out_4_whyte.png">Whyte [3] (26.94dB)<span><img src="imgs/out_4_whyte.png" /></span></a></li>
+            <!--
+            <li><a href="#">naive<span><img src="imgs/out_4_naive.png" /></span></a></li>
+            <li><a href="#">naive tv<span><img src="imgs/out_4_naive_tv.png" /></span></a></li>
+            <li><a href="#">gamma<span><img src="imgs/out_4_gamma.png" /></span></a></li>
+            <li><a href="#">gamma tv<span><img src="imgs/out_4_gamma_tv.png" /></span></a></li>
+            <li><a href="#">gamma quantize<span><img src="imgs/out_4_gamma_quantize.png" /></span></a></li>
+            -->
+            <li><a href="imgs/out_4_gamma_quantize_tv.png">Our result (30.97dB)<span><img src="imgs/out_4_gamma_quantize_tv.png" /></span></a></li>
+         </ul>
+    </div>
+    </small>
+    
+    <h4>Image 5</h4>
+
+    <!--
+    <small><b>download colored ply:</b>
+    <a href="img/flat/c_Z1.ply.gz">gt</a>,
+    <a href="img/flat/c_rs1_fu_heNEW_N50_med.ply.gz">median 50</a>,
+    <a href="img/flat/c_rs1_fu_heNEW_N50_kmedianslow.ply.gz">k-medians 50</a>
+    </small>
+    -->
+
+    <small>
+    <div class="gallery" style="height:430px">
+        <ul class="index">
+            <li><a href="imgs/input_5.png">Degraded (20.00dB)<span><img src="imgs/input_5.png" /></span></a></li>
+            <li><a href="imgs/groundtruth_5.png">Ground-truth<span><img src="imgs/groundtruth_5.png"/></span></a></li>
+            <li><a href="imgs/out_5_almeida.png">Almeida [2] (27.80dB)<span><img src="imgs/out_5_almeida.png" /></span></a></li>
+            <li><a href="imgs/out_5_whyte.png">Whyte [3] (26.48dB)<span><img src="imgs/out_5_whyte.png" /></span></a></li>
+            <!--
+            <li><a href="#">naive<span><img src="imgs/out_5_naive.png" /></span></a></li>
+            <li><a href="#">naive tv<span><img src="imgs/out_5_naive_tv.png" /></span></a></li>
+            <li><a href="#">gamma<span><img src="imgs/out_5_gamma.png" /></span></a></li>
+            <li><a href="#">gamma tv<span><img src="imgs/out_5_gamma_tv.png" /></span></a></li>
+            <li><a href="#">gamma quantize<span><img src="imgs/out_5_gamma_quantize.png" /></span></a></li>
+            -->
+            <li><a href="imgs/out_5_gamma_quantize_tv.png">Our result (29.15dB)<span><img src="imgs/out_5_gamma_quantize_tv.png" /></span></a></li>
+         </ul>
+    </div>
+    </small>
+    
+    <h4>Image 6</h4>
+
+    <!--
+    <small><b>download colored ply:</b>
+    <a href="img/flat/c_Z1.ply.gz">gt</a>,
+    <a href="img/flat/c_rs1_fu_heNEW_N50_med.ply.gz">median 50</a>,
+    <a href="img/flat/c_rs1_fu_heNEW_N50_kmedianslow.ply.gz">k-medians 50</a>
+    </small>
+    -->
+
+    <small>
+    <div class="gallery" style="height:430px">
+        <ul class="index">
+            <li><a href="imgs/input_6.png">Degraded (19.28dB)<span><img src="imgs/input_6.png" /></span></a></li>
+            <li><a href="imgs/groundtruth_6.png">Ground-truth<span><img src="imgs/groundtruth_6.png"/></span></a></li>
+            <li><a href="imgs/out_6_almeida.png">Almeida [2] (27.55dB)<span><img src="imgs/out_6_almeida.png" /></span></a></li>
+            <li><a href="imgs/out_6_whyte.png">Whyte [3] (26.88dB)<span><img src="imgs/out_6_whyte.png" /></span></a></li>
+            <!--
+            <li><a href="#">naive<span><img src="imgs/out_6_naive.png" /></span></a></li>
+            <li><a href="#">naive tv<span><img src="imgs/out_6_naive_tv.png" /></span></a></li>
+            <li><a href="#">gamma<span><img src="imgs/out_6_gamma.png" /></span></a></li>
+            <li><a href="#">gamma tv<span><img src="imgs/out_6_gamma_tv.png" /></span></a></li>
+            <li><a href="#">gamma quantize<span><img src="imgs/out_6_gamma_quantize.png" /></span></a></li>
+            -->
+            <li><a href="imgs/out_6_gamma_quantize_tv.png">Our result (28.26dB)<span><img src="imgs/out_6_gamma_quantize_tv.png" /></span></a></li>
+         </ul>
+    </div>
+    </small>
+    
+    <h4>Image 7</h4>
+
+    <!--
+    <small><b>download colored ply:</b>
+    <a href="img/flat/c_Z1.ply.gz">gt</a>,
+    <a href="img/flat/c_rs1_fu_heNEW_N50_med.ply.gz">median 50</a>,
+    <a href="img/flat/c_rs1_fu_heNEW_N50_kmedianslow.ply.gz">k-medians 50</a>
+    </small>
+    -->
+
+    <small>
+    <div class="gallery" style="height:430px">
+        <ul class="index">
+            <li><a href="imgs/input_7.png">Degraded (15.16dB)<span><img src="imgs/input_7.png" /></span></a></li>
+            <li><a href="imgs/groundtruth_7.png">Ground-truth<span><img src="imgs/groundtruth_7.png"/></span></a></li>
+            <li><a href="imgs/out_7_almeida.png">Almeida [2] (23.52dB)<span><img src="imgs/out_7_almeida.png" /></span></a></li>
+            <li><a href="imgs/out_7_whyte.png">Whyte [3] (23.00dB)<span><img src="imgs/out_7_whyte.png" /></span></a></li>
+            <!--
+            <li><a href="#">naive<span><img src="imgs/out_7_naive.png" /></span></a></li>
+            <li><a href="#">naive tv<span><img src="imgs/out_7_naive_tv.png" /></span></a></li>
+            <li><a href="#">gamma<span><img src="imgs/out_7_gamma.png" /></span></a></li>
+            <li><a href="#">gamma tv<span><img src="imgs/out_7_gamma_tv.png" /></span></a></li>
+            <li><a href="#">gamma quantize<span><img src="imgs/out_7_gamma_quantize.png" /></span></a></li>
+            -->
+            <li><a href="imgs/out_7_gamma_quantize_tv.png">Our result (25.29dB)<span><img src="imgs/out_7_gamma_quantize_tv.png" /></span></a></li>
+         </ul>
+    </div>
+    </small>
+    
+    <h4>Image 8</h4>
+
+    <!--
+    <small><b>download colored ply:</b>
+    <a href="img/flat/c_Z1.ply.gz">gt</a>,
+    <a href="img/flat/c_rs1_fu_heNEW_N50_med.ply.gz">median 50</a>,
+    <a href="img/flat/c_rs1_fu_heNEW_N50_kmedianslow.ply.gz">k-medians 50</a>
+    </small>
+    -->
+
+    <small>
+    <div class="gallery" style="height:430px">
+        <ul class="index">
+            <li><a href="imgs/input_8.png">Degraded (18.41dB)<span><img src="imgs/input_8.png" /></span></a></li>
+            <li><a href="imgs/groundtruth_8.png">Ground-truth<span><img src="imgs/groundtruth_8.png"/></span></a></li>
+            <li><a href="imgs/out_8_almeida.png">Almeida [2] (25.69dB)<span><img src="imgs/out_8_almeida.png" /></span></a></li>
+            <li><a href="imgs/out_8_whyte.png">Whyte [3] (25.39dB)<span><img src="imgs/out_8_whyte.png" /></span></a></li>
+            <!--
+            <li><a href="#">naive<span><img src="imgs/out_8_naive.png" /></span></a></li>
+            <li><a href="#">naive tv<span><img src="imgs/out_8_naive_tv.png" /></span></a></li>
+            <li><a href="#">gamma<span><img src="imgs/out_8_gamma.png" /></span></a></li>
+            <li><a href="#">gamma tv<span><img src="imgs/out_8_gamma_tv.png" /></span></a></li>
+            <li><a href="#">gamma quantize<span><img src="imgs/out_8_gamma_quantize.png" /></span></a></li>
+            -->
+            <li><a href="imgs/out_8_gamma_quantize_tv.png">Our result (28.60dB)<span><img src="imgs/out_8_gamma_quantize_tv.png" /></span></a></li>
+         </ul>
+    </div>
+    </small>
+    
+<hr/>
+[1]: Anat Levin, Yair Weiss, Fredo Durand, and William T. Freeman, “Understanding and evaluating blind deconvolution algorithms,” 2009 IEEE Computer Society Conference on Computer Vision and Pattern Recognition Workshops, CVPR Workshops 2009, pp. 1964–1971, 2009.<br/>
+[2]: Mariana S. C. Almeida and Mario Figueiredo, “Deconvolving images with unknown boundaries using the alternating direction method of multipliers,” IEEE Transactions on Image Processing, vol. 22, no. 8, pp. 3074–3086, 2013.<br/>
+[3]: Oliver Whyte, Josef Sivic, and Andrew Zisserman, “Deblurring Shaken and Partially Saturated Images,” International Journal of Computer Vision, vol. 110, no. 2, pp.185–201, 2014.<br/>
+<br/>
+	</body>
+</html>
