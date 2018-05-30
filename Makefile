@@ -6,3 +6,6 @@ all: stochastic_deconvolution
 
 stochastic_deconvolution: stochastic_deconvolution.cpp image.o iio.o downscale_image.o
 
+clean:
+	-rm image.o iio.o downscale_image.o
+
