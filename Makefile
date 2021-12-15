@@ -1,10 +1,11 @@
 
 CXXFLAGS=-O3 -std=c++14
-LDFLAGS=-fopenmp -ltiff -ljpeg -lpng -lfftw3f -O3
+LDFLAGS=-fopenmp
+LDLIBS=-ltiff -ljpeg -lpng -lfftw3f -lm -lstdc++
 
 all: stochastic_deconvolution
 
-stochastic_deconvolution: stochastic_deconvolution.cpp image.o iio.o downscale_image.o
+stochastic_deconvolution: stochastic_deconvolution.o image.o iio.o downscale_image.o
 
 clean:
 	-rm image.o iio.o downscale_image.o
